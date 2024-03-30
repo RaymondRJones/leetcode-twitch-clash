@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Leetcode Clash Royale",
+  "version": "1.0",
+  "description": "Solve Problems with Friends.",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": ["activeTab"]
+}
