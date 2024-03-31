@@ -12,11 +12,10 @@ document.addEventListener('click', function(event) {
       if (resultElement && resultElement.textContent.includes("Accepted")) {
         console.log('Submission Accepted');
 
-        // Send a message to the background script or directly to the server
-        // This example sends to the background script
         chrome.runtime.sendMessage({type: "SUBMISSION_ACCEPTED"});
+        console.log("Finished sending message to background.js")
       } else {
-        console.log('Submission result not yet available or not accepted');
+        console.log('Submission Failed (Or it spun for too long)');
       }
     }, 5000);
   }
