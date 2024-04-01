@@ -43,12 +43,14 @@ AWS API Gateways uses web sockets to maintain connections to users with their ro
 The DB is storing the data for all the rooms, like the roomID, users inside the room, their submissions, etc.
   
 
-# Things to Do as of April 1st, 2024
+# Things you can Help With For This App's Success (Updated April 1st, 2024)
 
 ##### Front-end side
 There's a ton of front-end things that can be improved on. For the core functionaltiy, the user flow needs to use dummy data first and be able to create rooms, join rooms, and see other users in rooms.
 
-Currently, a user can't really do any of this. It's just a chrome extension that asks for a user name and password and then navigates the user to the room regardless of input.
+Currently, a user can't really do any of this. It's just a chrome extension that asks for a user name and password and then navigates the user to the room regardless of input. 
+
+The React code is currently able to properly webscrape and tell when a user clicks submit. It's also able to know when the screen says "Accepted" vs. "Failure" in order to track AC's.
 
 ##### Backend
 
@@ -67,12 +69,12 @@ The AWS API Gateway is set up and I've created a public key that can have about 
 You can let me know if you want access to it, or want to start testing some Lambda functions on your own machine. That'd be helpful for getting these three functions complete and set up.
 
 createRooms will send a request to the lambda functions like
-`{action: "createRoom", "username":"emily"}
+`{"action": "createRoom", "username":"emily"}
 
 The server should create a random room_id using uuid with some length, then it will add the connectionID of the user and attach it to the username. It will create the room in the database and list "emily" as one of the users. It will return the 
 
 JoinRoom will send a request to the lambda function like 
-`{action: "joinRoom", "username":"emily", "roomId":"abcd3"}
+`{"action": "joinRoom", "username":"emily", "roomId":"abcd3"}
 
 The server should check if the roomID exists in the database, if it does, it should add the user into the room's list of users. It will return a list of users to the user and information about the room (Or does this always happen with websocket?)
 
