@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 lambda-functions/node_modules
+other_funcs/node_modules
 lambda-functions/function.zip
 # testing
 /coverage
