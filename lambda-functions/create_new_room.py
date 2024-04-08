@@ -25,7 +25,8 @@ def create_room(connection_id, username):
             }
         )
         print('Room created:', room_id)
-        return {'statusCode': 200, 'body': 'Room created successfully with room ID: ' + room_id}
+        return {'statusCode': 200, 'body': 'Room created successfully with room ID: ' +
+            room_id + 'for connectionID' + connection_id + "with username:" + username}
     except Exception as e:
         print(f"Error creating room: {e}")
         return {'statusCode': 500, 'body': 'Failed to create room'}
@@ -35,16 +36,12 @@ def generate_room_id():
 
 def lambda_handler(event, context):
     print("Heres the event,", event)
-    # The connection_id is provided by the API Gateway in the event object
-    connection_id = event.get('connectionId')
+    connection_id = event["requestContext"]["connectionId"]
     print("connection id", connection_id)
-    # Assuming the username is sent as part of the body in a WebSocket message
-    # For example, the client sends a message with {"action": "createRoom", "username": "exampleUser"}
-
-    username = event.get('username', 'defaultUsername')  # Use a default username if none is provided
-     # Provide a default username if none is provided
-    print("Grab username", username)
-    # Attempt to create the room
+    event_body_data = event["body"]
+    print("EVENT DATA", event_body_data)
+    username = json.loads(event_body_data).get("username")
+    print("LOADING username from json", username)
     result = create_room(connection_id, username)
     return result
 

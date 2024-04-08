@@ -7,24 +7,26 @@ function Home() {
   const navigate = useNavigate(); // Correctly call useNavigate here
 
   const createRoom = async () => {
-    const ws = new WebSocket('wss://rktndgn0fd.execute-api.us-east-1.amazonaws.com/Prod'); // Update with your API Gateway WebSocket URL
+    const apiKey = 'OuhtOfHQSFavV1b1dacWL5rwSbE2d77s6DO57kMc';
+    const ws = new WebSocket(`wss://rktndgn0fd.execute-api.us-east-1.amazonaws.com/Prod?x-api-key=${apiKey}`);
 
     ws.onopen = () => {
       console.log('WebSocket Connected');
       ws.send(JSON.stringify({
-        action: 'createRoom', // This should match the routing in your WebSocket API
-        userName: userName, // Optional: if you want to track who created the room
+        action: 'createRoom',
+        userName: userName,
       }));
     };
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.success && data.roomCode) {
-        console.log("Room created successfully:", data.roomCode);
-        setRoomCode(data.roomCode); // Update the room code state with the new room
-        // Navigate to the new room, or display the room code to the user
-        // navigate('/room', { state: { roomCode: data.roomCode } });
-        ws.close(); // Close WebSocket connection after receiving the response
+      if (data.statusCode === 200) {
+        console.log("Room created successfully:", data.body);
+
+        const body = JSON.parse(data.body);
+        setRoomCode(body.roomID);
+        navigate('/room', { state: { roomCode: body.roomID } });
+        ws.close();
       } else {
         console.error('Error creating room:', data.message || 'Unknown error');
         ws.close();
