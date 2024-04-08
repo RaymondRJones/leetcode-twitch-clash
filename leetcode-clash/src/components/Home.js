@@ -6,10 +6,28 @@ function Home() {
   const [userName, setUserName] = useState('');
   const navigate = useNavigate(); // Correctly call useNavigate here
 
-  const createRoom = async () => {
-    const apiKey = 'OuhtOfHQSFavV1b1dacWL5rwSbE2d77s6DO57kMc';
+  const wsRef = React.useRef(null);
+
+  useEffect(() => {
+    const apiKey = 'OuhtOfHQSFavV1b1dacWL5rwSbE2d77s6DO57kMc';  // Basic key
     const ws = new WebSocket(`wss://rktndgn0fd.execute-api.us-east-1.amazonaws.com/Prod?x-api-key=${apiKey}`);
 
+    wsRef.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.action === 'updateLeaderboard' && data.roomCode === roomCode) {
+        // Handle the incoming leaderboard update
+        console.log("Leaderboard update received", data.leaderboard);
+        navigate('/leaderboard', { state: { leaderboard: data.leaderboard } });
+      }
+    };
+  
+    return () => {
+      if (wsRef.current) wsRef.current.close();
+    };
+  }, [navigate, roomCode]);
+
+
+  const createRoom = async () => {
     ws.onopen = () => {
       console.log('WebSocket Connected');
       ws.send(JSON.stringify({
@@ -40,24 +58,13 @@ function Home() {
   };
 
 
-  const joinRoom = async () => {
-    // Example purpose: Simulated response for success
-    const data = { success: true, leaderboard: [] }; // Simulate successful API response
-
-    if (data.success) {
-      console.log("Welcome! " + userName);
-      // Simulated leaderboard data
-      const dummyLeaderboardData = [
-        { id: 1, name: 'Alice', finishTime: '2m 15s' },
-        { id: 2, name: 'Bob', finishTime: '3m 30s' },
-        { id: 3, name: 'Charlie', finishTime: '5m 45s' },
-      ];
-
-      // Navigate to the leaderboard component with the dummy data
-      navigate('/leaderboard', { state: { leaderboard: dummyLeaderboardData } });
-    } else {
-      // Handle failure (e.g., show an error message)
-      console.error('Error joining room:', 'Failed to join the room');
+  const joinRoom = () => {
+    if (wsRef.current) {
+      wsRef.current.send(JSON.stringify({
+        action: 'joinRoom',
+        roomCode: roomCode,
+        userName: userName,
+      }));
     }
   };
 
